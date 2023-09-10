@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 public class Ball : MonoBehaviour
 {
     [Range(1.0f, 5.0f)] [SerializeField] private float speed;
+    [SerializeField] private float speedIncrease = 0.2f;
 
     public int damage = 1;
 
@@ -33,7 +34,7 @@ public class Ball : MonoBehaviour
         rb.velocity = direction * speed;
     }
     
-    private float BallDirection(Vector2 racketPosition, Vector2 ballPosition, float racketWidth)
+    private float BallDirection(Vector2 racketPosition, Vector2 ballPosition)
     {
         return Math.Clamp(ballPosition.x - racketPosition.x, -1f, 1f);
     }
@@ -45,16 +46,17 @@ public class Ball : MonoBehaviour
         if(col.collider.CompareTag("BreakableBrick"))
         {
             col.gameObject.GetComponent<Brick>().HitBrick(damage);
+            speed += speedIncrease;
         }
 
         if (col.collider.name == "Paddle")
         {
-            float newX = BallDirection(col.transform.position, transform.position,
-                col.collider.bounds.size.x);
+            float newX = BallDirection(col.transform.position, transform.position);
 
             //Vector2 newDirection = new Vector2(newX, 1).normalized;
             Quaternion angle = Quaternion.AngleAxis(newX * col.collider.GetComponent<Paddle>().maxAngleOnBounce, Vector3.back);
             Vector2 newDirection = angle * new Vector2(0, 1);
+            speed += speedIncrease;
             col.otherRigidbody.velocity = newDirection * speed;
         }
 

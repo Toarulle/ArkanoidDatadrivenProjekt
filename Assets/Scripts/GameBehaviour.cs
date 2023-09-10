@@ -10,7 +10,8 @@ public class GameBehaviour : MonoBehaviour
 
     [SerializeField] private string gameOverScene;
     [SerializeField] private string gamePlayScene;
-    
+
+    [SerializeField] private int lives = 3;
     [SerializeField] private Paddle paddle = null;
     [SerializeField] private GameObject ballPrefab = null;
     
@@ -35,7 +36,7 @@ public class GameBehaviour : MonoBehaviour
 
     private void InitializeLevel()
     {
-        var firstBall = Instantiate(ballPrefab, paddle.transform.position+new Vector3(0,0.15f), Quaternion.identity);
+        var firstBall = Instantiate(ballPrefab, paddle.transform.position+new Vector3(0,ballPrefab.transform.localScale.x*2), Quaternion.identity);
         balls.Add(firstBall);
         balls.First().transform.SetParent(paddle.transform);
         ballOnPaddle = balls.First();
@@ -43,7 +44,7 @@ public class GameBehaviour : MonoBehaviour
     
     private void SendBallFromPaddle()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Space))
         {
             paddle.transform.DetachChildren();
             ballOnPaddle.GetComponent<Ball>().SendBall();
@@ -55,11 +56,14 @@ public class GameBehaviour : MonoBehaviour
     {
         balls.Remove(ball);
         Destroy(ball);
-        if (balls.Count < 1)
+        if (balls.Count >= 1) return;
+        lives--;
+        if (lives < 1)
         {
-            Debug.Log("GameOver");
             SceneManager.LoadScene(gameOverScene);
+            return;
         }
+        InitializeLevel();
     }
     
     public void RestartGame()

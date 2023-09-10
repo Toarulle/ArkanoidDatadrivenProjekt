@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,22 +11,34 @@ using UnityEngine.UIElements;
 
 public class Paddle : MonoBehaviour
 {
-    [Range(-1.0f, -5.0f)] [SerializeField] private float paddleHeight;
+    [Tooltip("The height the paddle rests on")][Range(5.0f, -5.0f)] [SerializeField] private float paddleHeight;
+    [Tooltip("The speed of the paddle")][Range(0f,10f)][SerializeField] private float moveSpeed = 6f;
+    [Tooltip("If true, disable keyboard movement and use mouse position instead")][SerializeField] private bool UseMouseInstead = false;
 
-    public bool sameClampRightAndLeft = true;
-    [SerializeField] private float clampRight;
-    [SerializeField] private float clampLeft;
+    [Tooltip("If true, copy the Clamp Right value and put the inverted value as Clamp Left")]public bool sameClampRightAndLeft = true;
+    [Tooltip("How far to the right the paddle should be able to go")][SerializeField] private float clampRight;
+    [Tooltip("How far to the left the paddle should be able to go")][SerializeField] private float clampLeft;
 
-    private float maximumClampRight;
-    private float maximumClampLeft;
-    
-    [Range(0f,90f)]
+    [Tooltip("The maximum angle the ball can bounce off of the paddle")][Range(0f,90f)]
     public float maxAngleOnBounce = 70f;
 
-    void Update()
+    private Camera mainCamera = null;
+
+    private void Start()
     {
-        var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = new Vector2(Math.Clamp(mousePos.x, clampLeft, clampRight), paddleHeight);
+        mainCamera = Camera.main;
+    }
+
+    private void Update()
+    {
+        if (UseMouseInstead)
+        {
+            MovementMouse();
+        }
+        else
+        {
+            MovementKeyboard();
+        }
     }
 
     private void OnValidate()
@@ -38,6 +51,18 @@ public class Paddle : MonoBehaviour
         transform.position = new Vector3(transform.position.x, paddleHeight);
     }
 
+    private void MovementKeyboard()
+    {
+        var moveDir = Input.GetAxisRaw("Horizontal");
+        transform.position = new Vector3(Math.Clamp(transform.position.x + moveDir * (moveSpeed * Time.deltaTime), clampLeft, clampRight),paddleHeight,0);
+    }
+
+    private void MovementMouse()
+    {
+        var mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        transform.position = new Vector2(Math.Clamp(mousePos.x, clampLeft, clampRight), paddleHeight);
+    }
+    
     private void OnDrawGizmosSelected()
     {
         var paddleWidth = GetComponent<SpriteRenderer>().bounds.size.x;
@@ -52,10 +77,11 @@ public class Paddle : MonoBehaviour
 
         Quaternion angleRight = Quaternion.AngleAxis(maxAngleOnBounce, Vector3.back);
         Quaternion angleLeft = Quaternion.AngleAxis(-maxAngleOnBounce, Vector3.back);
+        var currentYPosition = transform.position.y;
         
-        Gizmos.DrawLine(new Vector3(lineStartRight, transform.position.y, 0),
-            new Vector3(lineStartRight, transform.position.y, 0f) + angleRight*(new Vector3(0, 1, 0)));
-        Gizmos.DrawLine(new Vector3(lineStartLeft, transform.position.y, 0),
-            new Vector3(lineStartLeft, transform.position.y, 0f) + angleLeft*(new Vector3(0, 1, 0)));
+        Gizmos.DrawLine(new Vector3(lineStartRight, currentYPosition, 0),
+            new Vector3(lineStartRight, currentYPosition, 0f) + angleRight*(new Vector3(0, 1, 0)));
+        Gizmos.DrawLine(new Vector3(lineStartLeft, currentYPosition, 0),
+            new Vector3(lineStartLeft, currentYPosition, 0f) + angleLeft*(new Vector3(0, 1, 0)));
     }
 }
