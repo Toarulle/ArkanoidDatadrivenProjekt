@@ -15,9 +15,9 @@ public class Paddle : MonoBehaviour
     [Tooltip("The speed of the paddle")][Range(0f,10f)][SerializeField] private float moveSpeed = 6f;
     [Tooltip("If true, disable keyboard movement and use mouse position instead")][SerializeField] private bool UseMouseInstead = false;
 
-    [Tooltip("If true, copy the Clamp Right value and put the inverted value as Clamp Left")]public bool sameClampRightAndLeft = true;
-    [Tooltip("How far to the right the paddle should be able to go")][SerializeField] private float clampRight;
-    [Tooltip("How far to the left the paddle should be able to go")][SerializeField] private float clampLeft;
+    [Tooltip("If true, copy the Clamp Right value and put its inverted value as Clamp Left")]public bool sameClampRightAndLeft = true;
+    [Tooltip("How far to the right the paddle should be able to go (a non-negative value)")][SerializeField] private float clampRight;
+    [Tooltip("How far to the left the paddle should be able to go (a non-positive value)")][SerializeField] private float clampLeft;
 
     [Tooltip("The maximum angle the ball can bounce off of the paddle")][Range(0f,90f)]
     public float maxAngleOnBounce = 70f;
@@ -43,11 +43,21 @@ public class Paddle : MonoBehaviour
 
     private void OnValidate()
     {
+        if (clampRight < 0.0f)
+        {
+            Debug.LogWarning("Clamp Right must have a non-negative value.", this);
+            clampRight = 0.0f;
+        }
+        if (clampLeft > 0.0f)
+        {
+            Debug.LogWarning("Clamp Left must have a non-positive value.", this);
+            clampLeft = -0.0f;
+        }
         if (sameClampRightAndLeft)
         {
             clampLeft = -clampRight;
         }
-
+        
         transform.position = new Vector3(transform.position.x, paddleHeight);
     }
 

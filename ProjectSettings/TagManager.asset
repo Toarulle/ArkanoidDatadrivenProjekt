@@ -8,6 +8,7 @@ TagManager:
   - UnbreakableBrick
   - Void
   - Ball
+  - Wall
   layers:
   - Default
   - TransparentFX

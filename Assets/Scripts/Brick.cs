@@ -6,6 +6,8 @@ using UnityEngine.Serialization;
 
 public class Brick : MonoBehaviour
 {
+    [SerializeField] public int points = 20;
+    [SerializeField] public int destroyPoints = 100;
     [SerializeField] private int health = 1;
     [SerializeField] private GameObject powerUp = null;
     [SerializeField] private Sprite[] spriteList;
@@ -18,10 +20,12 @@ public class Brick : MonoBehaviour
         if (health <= 0)
         {
             DestroyBrick();
+            FindObjectOfType<GameBehaviour>().AddPoints(destroyPoints);
         }
         else
         {
             UpdateSprite();
+            FindObjectOfType<GameBehaviour>().AddPoints(points);
         }
     }
 
