@@ -98,8 +98,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b6983fba827ff459dffe8c19e23432, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  points: 100
+  destroyPoints: 400
   health: 1
-  powerUp: {fileID: 0}
+  hasPowerUp: 1
+  powerUpDropChance: 0.2
+  powerUpList:
+  - {fileID: 9135794855624052190, guid: 2e4db9295e58ee14eac53da57c0d3789, type: 3}
+  - {fileID: 2315328009141202496, guid: b8a0cbb00800ffa44b928ed28a21b041, type: 3}
   spriteList:
   - {fileID: 21300000, guid: 6cbd448c54fa95f4592b43328cb714f4, type: 3}
   - {fileID: 21300000, guid: 1e21ee6171124c64db9e3659258e77fb, type: 3}

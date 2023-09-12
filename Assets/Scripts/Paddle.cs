@@ -34,9 +34,7 @@ public class Paddle : MonoBehaviour
         if (UseMouseInstead)
         {
             MovementMouse();
-        }
-        else
-        {
+        }else {
             MovementKeyboard();
         }
     }
@@ -64,13 +62,18 @@ public class Paddle : MonoBehaviour
     private void MovementKeyboard()
     {
         var moveDir = Input.GetAxisRaw("Horizontal");
-        transform.position = new Vector3(Math.Clamp(transform.position.x + moveDir * (moveSpeed * Time.deltaTime), clampLeft, clampRight),paddleHeight,0);
+        transform.position = new Vector3(
+            Math.Clamp(
+                transform.position.x +
+                moveDir * (moveSpeed * Time.deltaTime),
+                clampLeft, clampRight),paddleHeight,0);
     }
 
     private void MovementMouse()
     {
         var mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = new Vector2(Math.Clamp(mousePos.x, clampLeft, clampRight), paddleHeight);
+        transform.position = new Vector2(Math.Clamp(
+            mousePos.x, clampLeft, clampRight), paddleHeight);
     }
     
     private void OnDrawGizmosSelected()

@@ -9,6 +9,8 @@ TagManager:
   - Void
   - Ball
   - Wall
+  - Paddle
+  - BricksForPainting
   layers:
   - Default
   - TransparentFX

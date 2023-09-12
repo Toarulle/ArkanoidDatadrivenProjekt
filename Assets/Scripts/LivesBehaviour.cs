@@ -1,12 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LivesBehaviour : MonoBehaviour
 {
-    [SerializeField] private GameObject lifePrefab = null;
+    [Tooltip("Prefab of the life UI element (required)")][SerializeField] private GameObject lifePrefab = null;
     private List<GameObject> lifeList = null;
     
     public void SetupLives(int maxLives)
@@ -17,6 +18,14 @@ public class LivesBehaviour : MonoBehaviour
         {
             lifeList.Add(Instantiate(lifePrefab,new Vector3(0f,0f,0f),quaternion.identity,transform));
             lifeList[i].GetComponent<RectTransform>().localPosition = new Vector3(0, i * 30);
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (lifePrefab == null)
+        {
+            Debug.LogWarning("Missing Life Prefab", this);
         }
     }
 
