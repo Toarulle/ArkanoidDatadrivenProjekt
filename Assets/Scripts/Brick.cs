@@ -10,9 +10,9 @@ using Random = UnityEngine.Random;
 
 public class Brick : MonoBehaviour
 {
-    [Tooltip("The amount of points player gets when damaging the brick")][SerializeField] public int points;
-    [Tooltip("The amount of points the player gets when destroying the brick")][SerializeField] public int destroyPoints;
-    [Tooltip("The health the brick has (Should not be higher than the amount of sprites in the Sprite List)")][SerializeField] private int health = 1;
+    [Tooltip("The amount of points player gets when damaging the brick (a non-negative value)")][SerializeField] public int points;
+    [Tooltip("The amount of points the player gets when destroying the brick (a non-negative value)")][SerializeField] public int destroyPoints;
+    [Tooltip("The health the brick has (Should not be higher than the amount of sprites in the Sprite List) (a non-zero, non-negative value)")][SerializeField] private int health = 1;
     [Tooltip("If this brick should have a power up")][SerializeField] private bool hasPowerUp = true;
     [Tooltip("How big the chance of it dropping a power up is (Range 0.0-1.0, 1.0 is 100% chance)")][Range(0.0f,1.0f)][SerializeField] private float powerUpDropChance = 0.1f;
     [Tooltip("What power ups should the brick be able to drop")][SerializeField] private List<GameObject> powerUpList = null;
@@ -28,6 +28,25 @@ public class Brick : MonoBehaviour
         gb = FindObjectOfType<GameBehaviour>();
     }
 
+    private void OnValidate()
+    {
+        if (points < 0)
+        {
+            Debug.LogWarning("Points can't be negative", this);
+            points = 0;
+        }
+        if (destroyPoints < 0)
+        {
+            Debug.LogWarning("Destroy Points can't be negative", this);
+            destroyPoints = 0;
+        }
+        if (health < 1)
+        {
+            Debug.LogWarning("Health can't be below 1", this);
+            health = 1;
+        }
+    }
+
     public bool HitBrick(int damage = 1)
     {
         if (unbreakable) return false;
@@ -38,11 +57,10 @@ public class Brick : MonoBehaviour
             gb.AddPoints(destroyPoints);
             gb.RemoveBrickFromPlay(gameObject);
             return true;
-        }else {
-            UpdateSprite();
-            gb.AddPoints(points);
-            return false;
         }
+        UpdateSprite();
+        gb.AddPoints(points);
+        return false;
     }
 
     private void DestroyBrick()

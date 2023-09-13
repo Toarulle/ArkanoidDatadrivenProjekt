@@ -11,10 +11,9 @@ using UnityEngine.UIElements;
 
 public class Paddle : MonoBehaviour
 {
-    [Tooltip("The height the paddle rests on")][Range(5.0f, -5.0f)] [SerializeField] private float paddleHeight;
+    [Tooltip("The height the paddle rests on")][Range(5.0f, -5.0f)][SerializeField] private float paddleHeight;
     [Tooltip("The speed of the paddle")][Range(0f,10f)][SerializeField] private float moveSpeed = 6f;
     [Tooltip("If true, disable keyboard movement and use mouse position instead")][SerializeField] private bool UseMouseInstead = false;
-
     [Tooltip("If true, copy the Clamp Right value and put its inverted value as Clamp Left")]public bool sameClampRightAndLeft = true;
     [Tooltip("How far to the right the paddle should be able to go (a non-negative value)")][SerializeField] private float clampRight;
     [Tooltip("How far to the left the paddle should be able to go (a non-positive value)")][SerializeField] private float clampLeft;
@@ -79,9 +78,12 @@ public class Paddle : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         var paddleWidth = GetComponent<SpriteRenderer>().bounds.size.x;
-        //Gizmos for showing the maximum width the paddle can go (corresponding to the "clampLeft" and "clampRight" variables
-        Gizmos.DrawLine(new Vector3(clampLeft-paddleWidth/2,paddleHeight-0.5f),new Vector3(clampLeft-paddleWidth/2,paddleHeight+0.5f));
-        Gizmos.DrawLine(new Vector3(clampRight+paddleWidth/2,paddleHeight-0.5f),new Vector3(clampRight+paddleWidth/2,paddleHeight+0.5f));
+        //Gizmos for showing the maximum width the paddle can go
+        //(corresponding to the "clampLeft" and "clampRight" variables)
+        Gizmos.DrawLine(new Vector3(clampLeft-paddleWidth/2,paddleHeight-0.5f),
+            new Vector3(clampLeft-paddleWidth/2,paddleHeight+0.5f));
+        Gizmos.DrawLine(new Vector3(clampRight+paddleWidth/2,paddleHeight-0.5f),
+            new Vector3(clampRight+paddleWidth/2,paddleHeight+0.5f));
         
         
         //Gizmos for showing the maximum angle the ball can bounce when close to the edge of the paddle

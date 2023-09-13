@@ -67,9 +67,9 @@ public class Ball : MonoBehaviour
         rb.velocity = newDirection * speed;
     }
     
-    private float BallDirection(Vector2 racketPosition, Vector2 ballPosition)
+    private float BallDirection(float racketWidth, Vector2 racketPosition, Vector2 ballPosition)
     {
-        return Math.Clamp(ballPosition.x - racketPosition.x, -1f, 1f);
+        return Math.Clamp((ballPosition.x - racketPosition.x)/(racketWidth/2), -1f, 1f);
     }
 
     public void EnableFireBall(int newDamage)
@@ -78,7 +78,6 @@ public class Ball : MonoBehaviour
         GetComponent<Collider2D>().isTrigger = true;
         GetComponent<SpriteRenderer>().sprite = fireBallSprite;
     }
-    
     public void DisableFireBall()
     {
         damage = originallySetDamage;
@@ -124,7 +123,8 @@ public class Ball : MonoBehaviour
         {
             audioController.HitPaddle();
             float newX = BallDirection(
-                col.transform.position, transform.position);
+                col.collider.bounds.size.x,col.transform.position, 
+                transform.position);
             Quaternion angle = Quaternion.AngleAxis(
                 newX * col.collider.GetComponent<Paddle>().maxAngleOnBounce, Vector3.back);
             Vector2 newDirection = angle * new Vector2(0, 1);
@@ -140,7 +140,7 @@ public class Ball : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.CompareTag("Wall"))
+        if (col.CompareTag("Wall") || col.CompareTag("UnbreakableBrick"))
         {
             BallBounce(col.ClosestPoint(transform.position));
         }
@@ -158,7 +158,7 @@ public class Ball : MonoBehaviour
         if (col.name == "Paddle")
         {
             audioController.HitPaddle();
-            float newX = BallDirection(col.transform.position, transform.position);
+            float newX = BallDirection(col.bounds.size.x,col.transform.position, transform.position);
             Quaternion angle = Quaternion.AngleAxis(newX * col.GetComponent<Paddle>().maxAngleOnBounce, Vector3.back);
             Vector2 newDirection = angle * new Vector2(0, 1);
             speed += speedIncrease;

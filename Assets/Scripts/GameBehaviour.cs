@@ -15,12 +15,11 @@ public class GameBehaviour : MonoBehaviour
     [Tooltip("Name of the Game Over Scene")][SerializeField] private string gameOverScene;
     [Tooltip("Name of the Game Play Scene")][SerializeField] private string gamePlayScene;
     [Tooltip("Name of the Level Cleared Scene")][SerializeField] private string levelClearedScene;
-
     [Tooltip("The amount of lives the player has before losing")][SerializeField] private int lives = 3;
     [Tooltip("The paddle script from the scene (required)")][SerializeField] private Paddle paddle = null;
     [Tooltip("The ball prefab (required)")][SerializeField] private GameObject ballPrefab = null;
-
     [Tooltip("How many zeroes should be along with the score. E.g. 8 with 2260 points gives: 00002260 (min: 4)")][SerializeField] private int numberAmountInPointsText = 8;
+    
     private int points = 0;
     private List<GameObject> balls = new List<GameObject>();
     private List<GameObject> bricksInPlay = new List<GameObject>();
@@ -29,7 +28,6 @@ public class GameBehaviour : MonoBehaviour
 
     private float powerUpTimer = 0;
     private bool powerUpEnabled = false;
-    private bool gameCompleted = false;
     private int originalLives;
     
 
@@ -54,8 +52,7 @@ public class GameBehaviour : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (instance != this) return;
-        if (SceneManager.GetActiveScene() ==
-            SceneManager.GetSceneByName(gamePlayScene))
+        if (scene == SceneManager.GetSceneByName(gamePlayScene))
         {
             InitializeLevel();
             FindAllBricksInPlay();
@@ -65,11 +62,6 @@ public class GameBehaviour : MonoBehaviour
     
     void Update()
     {
-        if (SceneManager.GetActiveScene() == SceneManager.GetSceneByName(gamePlayScene) && gameCompleted)
-        {
-            gameCompleted = false;
-            SceneManager.LoadScene(levelClearedScene);
-        }
         if (ballOnPaddle)
         {
             SendBallFromPaddle();
@@ -130,7 +122,7 @@ public class GameBehaviour : MonoBehaviour
         bricksInPlay.Remove(brick);
         if (bricksInPlay.Count == 0)
         {
-            gameCompleted = true;
+            SceneManager.LoadScene(levelClearedScene);
         }
     }
     private void InitializePoints()
